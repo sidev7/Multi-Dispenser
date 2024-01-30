@@ -1,0 +1,107 @@
+
+########################################################################################################################################################
+SUMMARY
+########################################################################################################################################################
+
+360kW i.e. 12 power modules with 6 single gun dispensers are considered.
+
+DLB will work in three modes
+	1.	Equal mode
+	2.	Priority mode (One lane - Fast Lane, Others - FIFO)
+	3.	Priority mode (FIFO)
+	
+In each mode number of power modules to assign will depend on below parameters and in order:
+	1.	Set availability (by configuration)
+	2.	FIFO
+	3.	Demand
+
+########################################################################################################################################################
+
+
+########################################################################################################################################################
+EQUAL MODE
+########################################################################################################################################################
+
+	>	In Equal Mode, power modules will be equally divided between the dispensers if all the dispensers are occupied.
+	>	In other case modules will be assiged based on FIFO priority and demand
+	>	Priority list contains the dispenser number. Index number indicates priority level. Low index number indicates highest priority.
+	>	Distribution list contains number of assigned modules. Index number indicates dispenser number.
+	>	When all the power modules are used up (Step 3), and new vehicle connects, last vehicle connected has to release few modules (Step 4).
+		If the last vehicle connectd is already charging on minimum number of modules, then we move to last to last connected vehicle and so on.
+	>	When any occupied dispenser becomes free, priority list and distribution list both are updated (Step 5).
+	>	When any power modules become available. Assignig of those power modules will be as per the priority list.
+
+	----------------------------------------------------------------------------------------------------------------------------------------
+		Priority list 			|		Distribution list								|		Availablility list
+		(Dispenser number)		|		(No. of modules assigned to each dispenser)		|		(No. of modules available to each dispenser)
+	----------------------------|-------------------------------------------------------|---------------------------------------------------
+	1.	[2, 0, 0, 0, 0, 0]		|		[0, 4, 0, 0, 0, 0] / 8							|		[2, 2, 2, 2, 2, 2]
+	2.	[2, 4, 0, 0, 0, 0]		|		[0, 4, 0, 2, 0, 0] / 6							|		[2, 2, 2, 2, 2, 2]
+	3.	[2, 4, 1, 0, 0, 0]		|		[6, 4, 0, 2, 0, 0] / 0							|		[2, 2, 2, 2, 2, 2]
+	4.	[2, 4, 1, 6, 0, 0]		|		[4, 4, 0, 2, 0, 2] / 0							|		[2, 2, 2, 2, 2, 2]
+	5.	[4, 1, 6, 0, 0, 0]		|		[4, 0, 0, 2, 0, 2] / 4							|		[2, 2, 2, 2, 2, 2]
+	6.	[4, 1, 6, 5, 0, 0]		|		[4, 0, 0, 2, 4, 2] / 0							|		[2, 2, 2, 2, 2, 2]
+	7.	[4, 1, 6, 5, 3, 0]		|		[4, 0, 2, 2, 2, 2] / 0							|		[2, 2, 2, 2, 2, 2]
+	8.	[4, 1, 6, 5, 3, 2]		|		[2, 2, 2, 2, 2, 2] / 0							|		[2, 2, 2, 2, 2, 2]
+	----------------------------------------------------------------------------------------------------------------------------------------
+
+########################################################################################################################################################
+
+
+########################################################################################################################################################
+PRIORITY MODE (FAST LANE)
+########################################################################################################################################################
+
+	>	In this mode some configurable number of power modules will be available for 1 particular dispenser. This will act as a Fast Lane.
+	>	For e.g. in case of 360kW, 4 modules can be set as available to dispenser no. 6.
+		Other dispensers can use these 4 modules only if dispenser no. 6 is not using.
+	>	Other dispnsers will follow the above parameters order for assignment of power modules.
+	
+	----------------------------------------------------------------------------------------------------------------------------------------
+		Priority list 			|		Distribution list								|		Availablility list
+		(Dispenser number)		|		(No. of modules assigned to each dispenser)		|		(No. of modules available to each dispenser)
+	----------------------------|-------------------------------------------------------|---------------------------------------------------
+	1.	[2, 0, 0, 0, 0, 0]		|		[0, 4, 0, 0, 0, 0] / 8							|		[1, 4, 1, 1, 1, 1] | 3
+	2.	[2, 4, 0, 0, 0, 0]		|		[0, 4, 0, 2, 0, 0] / 6							|		[1, 4, 1, 1, 1, 1] | 3
+	3.	[2, 4, 1, 0, 0, 0]		|		[4, 4, 0, 2, 0, 0] / 2							|		[1, 4, 1, 1, 1, 1] | 3
+	4.	[2, 4, 1, 6, 0, 0]		|		[4, 4, 0, 2, 0, 1] / 1							|		[1, 4, 1, 1, 1, 1] | 3
+	5.	[4, 1, 6, 0, 0, 0]		|		[4, 0, 0, 2, 0, 1] / 5							|		[1, 4, 1, 1, 1, 1] | 3
+	6.	[4, 1, 6, 5, 0, 0]		|		[4, 0, 0, 2, 3, 1] / 2							|		[1, 4, 1, 1, 1, 1] | 3
+	7.	[4, 1, 6, 5, 3, 0]		|		[4, 0, 1, 2, 3, 1] / 1							|		[1, 4, 1, 1, 1, 1] | 3
+	8.	[4, 1, 6, 5, 3, 2]		|		[3, 4, 1, 2, 1, 1] / 0							|		[1, 4, 1, 1, 1, 1] | 3
+	----------------------------------------------------------------------------------------------------------------------------------------
+
+########################################################################################################################################################
+
+
+########################################################################################################################################################
+PRIORITY MODE (FIFO)
+########################################################################################################################################################
+
+	>	In this mode some configurable number of power modules will be available for the dispenser to which a vehicle is connected first.
+		This configurable number should not exceed the total cable capacity of single dispenser. Or other way it should be always set to the max number.
+	>	For e.g. in case of 360kW we can have 4 power modules available to the first active dispenser.
+		Rest 8 power modules will be available for 5 dispensers.
+	>	In this mode Priority List will function the same as in Equal Mode.
+		Only difference will be the number of power modules available to the dispenser at index 0 in the list.
+		
+	----------------------------------------------------------------------------------------------------------------------------------------
+		Priority list 			|		Distribution list								|		Availablility list
+		(Dispenser number)		|		(No. of modules assigned to each dispenser)		|		(No. of modules available to each dispenser)
+	----------------------------|-------------------------------------------------------|---------------------------------------------------
+	1.	[2, 0, 0, 0, 0, 0]		|		[0, 4, 0, 0, 0, 0] / 8							|		[1, 4, 1, 1, 1, 1] | 3
+	2.	[2, 4, 0, 0, 0, 0]		|		[0, 4, 0, 2, 0, 0] / 6							|		[1, 4, 1, 1, 1, 1] | 3
+	3.	[2, 4, 1, 0, 0, 0]		|		[4, 4, 0, 2, 0, 0] / 2							|		[1, 4, 1, 1, 1, 1] | 3
+	4.	[2, 4, 1, 6, 0, 0]		|		[4, 4, 0, 2, 0, 1] / 1							|		[1, 4, 1, 1, 1, 1] | 3
+	5.	[4, 1, 6, 0, 0, 0]		|		[4, 0, 0, 2, 0, 1] / 5							|		[1, 1, 1, 4, 1, 1] | 3
+	6.	[4, 1, 6, 5, 0, 0]		|		[4, 0, 0, 2, 3, 1] / 2							|		[1, 1, 1, 4, 1, 1] | 3
+	7.	[4, 1, 6, 5, 3, 0]		|		[4, 0, 1, 2, 3, 1] / 1							|		[1, 1, 1, 4, 1, 1] | 3
+	8.	[4, 1, 6, 5, 3, 2]		|		[4, 1, 1, 2, 3, 1] / 0							|		[1, 1, 1, 4, 1, 1] | 3
+	----------------------------------------------------------------------------------------------------------------------------------------
+	
+########################################################################################################################################################
+
+
+########################################################################################################################################################
+EQUAL MODE ALGORITHM
+########################################################################################################################################################
